@@ -1,0 +1,63 @@
+
+
+#include <Arduino.h>
+
+/*
+ * ESP32 Automatic Plant Watering System
+ * Logic: 
+ * - High Analog Value = Dry Soil -> Pump ON
+ * - Low Analog Value = Wet Soil -> Pump OFF
+ */
+
+// --- PIN DEFINITIONS ---
+const int MOISTURE_PIN = 34; // Connect Sensor Analog Pin here (ADC1)
+const int PUMP_PIN = 26;     // Connect Relay Signal Pin here
+
+// --- CALIBRATION VARIABLES ---
+// You must change these based on your specific sensor readings!
+const int DRY_THRESHOLD = 2600; // Values ABOVE this are considered "Dry"
+const int WET_THRESHOLD = 2500; // Values BELOW this are considered "Wet"
+
+void setup() {
+  // Initialize Serial Monitor for debugging
+  Serial.begin(115200);
+
+  // Initialize Pump Pin as Output
+  pinMode(PUMP_PIN, OUTPUT);
+  
+  // Start with Pump OFF (assuming HIGH triggers relay, adjust if using Low Trigger relay)
+  digitalWrite(PUMP_PIN, LOW); 
+
+  // Give sensor time to stabilize
+  delay(1000);
+  Serial.println("System Initialized...");
+}
+
+void loop() {
+  // 1. Read the raw analog value from the sensor
+  // ESP32 ADC resolution is 12-bit (Values range from 0 to 4095)
+  int sensorValue = analogRead(MOISTURE_PIN);
+
+  // 2. Print value to Serial Monitor (Crucial for calibration)
+  Serial.print("Moisture Level: ");
+  Serial.println(sensorValue);
+
+  // 3. The Logic Control
+  // If value is High (Dry), turn pump ON
+  if (sensorValue > DRY_THRESHOLD) {
+    Serial.println("Status: Soil is DRY -> Pump ON");
+    digitalWrite(PUMP_PIN, HIGH);
+    //delay(1000);                   // Turn Relay ON
+  } 
+  // If value is Low (Wet), turn pump OFF
+  else if (sensorValue < WET_THRESHOLD) {
+    Serial.println("Status: Soil is WET -> Pump OFF");
+    digitalWrite(PUMP_PIN, LOW);  
+    //delay(1000);   // Turn Relay OFF
+  }
+  // If value is between Dry and Wet thresholds, do nothing (Hysteresis loop)
+  // This prevents the pump from rapidly clicking on/off at the borderline.
+
+  // 4. Wait before next reading
+  delay(2000); // Check every 2 seconds
+}
