@@ -4,12 +4,12 @@
 #include <DHT.h>
 
 // --- WIFI SETTINGS ---
-const char* ssid = "Octadex Prime";      // <--- CHANGE THIS
-const char* password = "meitantei@2060"; // <--- CHANGE THIS
+const char* ssid = "...";      // <--- CHANGE THIS
+const char* password = "..."; // <--- CHANGE THIS
 
 // --- SERVER SETTINGS ---
 // Replace 192.168.x.x with your Laptop's IP address (Run 'ipconfig' in cmd)
-String serverBase = "http://192.168.70.104:8080/"; 
+String serverBase = "..."; 
 
 // --- PIN DEFINITIONS ---
 #define DHTPIN 4
